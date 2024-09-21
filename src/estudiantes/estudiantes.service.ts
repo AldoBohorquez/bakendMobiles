@@ -3,6 +3,7 @@ import { CreateEstudianteDto } from './dto/create-estudiante.dto';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EstudiantesRepository } from './estudiantes.repository';
+import { EstudianteEntity } from './entities/estudiante.entity';
 
 @Injectable()
 export class EstudiantesService {
@@ -11,7 +12,9 @@ export class EstudiantesService {
     private readonly estudiantesRepository: EstudiantesRepository,
   ) {}
 
-  async create(createEstudianteDto: CreateEstudianteDto) {
+  async create(
+    createEstudianteDto: CreateEstudianteDto,
+  ): Promise<EstudianteEntity | { message: string }> {
     const verifyEmail = await this.estudiantesRepository.findByEmail(
       createEstudianteDto.email,
     );
@@ -22,19 +25,40 @@ export class EstudiantesService {
     return await this.estudiantesRepository.save(bodyEstudent);
   }
 
-  async findAll() {
-    return await this.estudiantesRepository.findAll();
+  async findAll(): Promise<EstudianteEntity[] | { message: string }> {
+    const usersFind = await this.estudiantesRepository.findAll();
+    if (!usersFind) {
+      return { message: 'No hay estudiantes registrados' };
+    }
+    return usersFind;
   }
 
-  async findOne(id: number) {
-    return await this.estudiantesRepository.findById(id);
+  async findOne(id: number): Promise<EstudianteEntity | { message: string }> {
+    const userFind = await this.estudiantesRepository.findById(id);
+    if (!userFind) {
+      return { message: 'Estudiante no encontrado' };
+    }
+    return userFind;
   }
 
-  update(id: number, updateEstudianteDto: UpdateEstudianteDto) {
-    return `This action updates a #${id} estudiante`;
+  async update(
+    id: number,
+    updateEstudianteDto: UpdateEstudianteDto,
+  ): Promise<EstudianteEntity | { message: string }> {
+    const bodyUpdate =
+      await this.estudiantesRepository.create(updateEstudianteDto);
+    const userUpdate = await this.estudiantesRepository.update(id, bodyUpdate);
+    if (!userUpdate) {
+      return { message: 'Estudiante no encontrado' };
+    }
+    return userUpdate.raw;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} estudiante`;
+  async remove(id: number): Promise<EstudianteEntity | { message: string }> {
+    const userFind = await this.estudiantesRepository.findById(id);
+    if (!userFind) {
+      return { message: 'Estudiante no encontrado' };
+    }
+    return this.estudiantesRepository.remove(userFind);
   }
 }
