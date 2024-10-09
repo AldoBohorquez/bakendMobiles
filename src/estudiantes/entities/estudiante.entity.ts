@@ -1,7 +1,11 @@
+import { AsistenciaEntity } from 'src/asistencias/entities/asistencia.entity';
+import { EstadoEscolarEntity } from 'src/estado-escolar/entities/estado-escolar.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,4 +32,9 @@ export class EstudianteEntity {
 
   @Column()
   direccion: string;
+
+  @OneToMany(() => AsistenciaEntity, (asistencia) => asistencia.estudiante, {
+    nullable: true,
+  })
+  asistencias: AsistenciaEntity[];
 }

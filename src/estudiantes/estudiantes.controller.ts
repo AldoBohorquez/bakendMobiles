@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { EstudiantesService } from './estudiantes.service';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto';
@@ -22,17 +24,41 @@ export class EstudiantesController {
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   @SyslogInclude('Crear estudiante')
   create(@Body() createEstudianteDto: CreateEstudianteDto) {
-    return this.estudiantesService.create(createEstudianteDto);
+    try {
+      return this.estudiantesService.create(createEstudianteDto);
+    } catch (error) {
+      throw new HttpException(
+        'Error al crear el estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
   }
 
   @Get()
   findAll() {
-    return this.estudiantesService.findAll();
+    try {
+      return this.estudiantesService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener los estudiantes',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.estudiantesService.findOne(+id);
+    try {
+      return this.estudiantesService.findOne(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener el estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
   }
 
   @Patch(':id')
@@ -40,11 +66,27 @@ export class EstudiantesController {
     @Param('id') id: string,
     @Body() updateEstudianteDto: UpdateEstudianteDto,
   ) {
-    return this.estudiantesService.update(+id, updateEstudianteDto);
+    try {
+      return this.estudiantesService.update(+id, updateEstudianteDto);
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar el estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.estudiantesService.remove(+id);
+    try {
+      return this.estudiantesService.remove(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al eliminar el estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
   }
 }

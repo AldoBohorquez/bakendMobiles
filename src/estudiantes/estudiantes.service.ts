@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,12 +14,12 @@ export class EstudiantesService {
 
   async create(
     createEstudianteDto: CreateEstudianteDto,
-  ): Promise<EstudianteEntity | { message: string }> {
+  ): Promise<EstudianteEntity | NotFoundException> {
     const verifyEmail = await this.estudiantesRepository.findByEmail(
       createEstudianteDto.email,
     );
     if (!verifyEmail) {
-      return { message: 'El correo ya se encuentra registrado' };
+      return new NotFoundException('El correo ya se encuentra registrado');
     }
     const bodyEstudent = this.estudiantesRepository.create(createEstudianteDto);
     return await this.estudiantesRepository.save(bodyEstudent);

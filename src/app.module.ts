@@ -13,6 +13,8 @@ import { ConfigValidation } from './config-validation';
 import { SyslogEntity } from './syslog/entity/syslog.entity';
 import { SyslogModule } from './syslog/syslog.module';
 import { EstudiantesModule } from './estudiantes/estudiantes.module';
+import { AsistenciasModule } from './asistencias/asistencias.module';
+import { EstadoEscolarModule } from './estado-escolar/estado-escolar.module';
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { EstudiantesModule } from './estudiantes/estudiantes.module';
     SocketsAdminModule,
     SyslogModule,
     EstudiantesModule,
+    AsistenciasModule,
+    EstadoEscolarModule,
   ],
   controllers: [],
   providers: [
