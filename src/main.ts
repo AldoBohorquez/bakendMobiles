@@ -7,6 +7,7 @@ import * as compression from 'compression';
 import helmet from 'helmet';
 import { SyslogInterceptor } from './syslog/interceptors/syslog.interceptor';
 import { SyslogService } from './syslog/syslog.service';
+import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestApplication>(AppModule);
   const configService = app.get(ConfigService);

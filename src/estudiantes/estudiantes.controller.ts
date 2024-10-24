@@ -8,6 +8,9 @@ import {
   Delete,
   HttpStatus,
   HttpException,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { EstudiantesService } from './estudiantes.service';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto';
@@ -15,17 +18,24 @@ import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
 import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 import { SyslogInclude } from 'src/syslog/interceptors/syslog-include.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import { Public } from 'src/auth/jwt/public.decorator';
 
 @Controller('estudiantes')
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class EstudiantesController {
   constructor(private readonly estudiantesService: EstudiantesService) {}
 
   @Post()
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   @SyslogInclude('Crear estudiante')
-  create(@Body() createEstudianteDto: CreateEstudianteDto) {
+  @UseInterceptors(FileInterceptor('foto'))
+  create(
+    @Body() createEstudianteDto: CreateEstudianteDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     try {
-      return this.estudiantesService.create(createEstudianteDto);
+      return this.estudiantesService.create(createEstudianteDto, file);
     } catch (error) {
       throw new HttpException(
         'Error al crear el estudiante',
@@ -59,6 +69,19 @@ export class EstudiantesController {
         error,
       );
     }
+  }
+
+  @Public()
+  @Get(':uuid/foto.jpg')
+  async fotoEstudiante(@Param('uuid') uuid: string, @Res() res: Response) {
+    const estudiante = await this.estudiantesService.findOneByUuid(uuid);
+    if (!estudiante) {
+      throw new HttpException('Estudiante no encontrado', HttpStatus.NOT_FOUND);
+    }
+    const rutaFotoEstudiante = 'foto.jpg';
+    return res.sendFile(rutaFotoEstudiante, {
+      root: './uploads/estudiantes/' + estudiante.id_estudiante,
+    });
   }
 
   @Patch(':id')

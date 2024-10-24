@@ -9,24 +9,37 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { EstadoEscolarService } from './estado-escolar.service';
-import { CreateEstadoEscolarDto } from './dto/create-estado-escolar.dto';
-import { UpdateEstadoEscolarDto } from './dto/update-estado-escolar.dto';
+import { TutoresService } from './tutores.service';
+import { CreateTutoreDto } from './dto/create-tutore.dto';
+import { UpdateTutoreDto } from './dto/update-tutore.dto';
 import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
-@Controller('estado-escolar')
-export class EstadoEscolarController {
-  constructor(private readonly estadoEscolarService: EstadoEscolarService) {}
+@Controller('tutores')
+export class TutoresController {
+  constructor(private readonly tutoresService: TutoresService) {}
+
+  @Post('login')
+  login(@Body() loginTutoreDto: CreateTutoreDto) {
+    try {
+      return this.tutoresService.loginTutor(loginTutoreDto);
+    } catch (error) {
+      throw new HttpException(
+        'Error al iniciar sesión',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
+  }
 
   @Post()
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
-  create(@Body() createEstadoEscolarDto: CreateEstadoEscolarDto) {
+  create(@Body() createTutoreDto: CreateTutoreDto) {
     try {
-      return this.estadoEscolarService.create(createEstadoEscolarDto);
+      return this.tutoresService.create(createTutoreDto);
     } catch (error) {
       throw new HttpException(
-        'Error al crear el estado escolar',
+        'Error al crear el tutor',
         HttpStatus.BAD_REQUEST,
         error,
       );
@@ -37,10 +50,10 @@ export class EstadoEscolarController {
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findAll() {
     try {
-      return this.estadoEscolarService.findAll();
+      return this.tutoresService.findAll();
     } catch (error) {
       throw new HttpException(
-        'Error al obtener los estados escolares',
+        'Error al obtener los tutores',
         HttpStatus.BAD_REQUEST,
         error,
       );
@@ -51,10 +64,10 @@ export class EstadoEscolarController {
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findOne(@Param('id') id: string) {
     try {
-      return this.estadoEscolarService.findOne(+id);
+      return this.tutoresService.findOne(+id);
     } catch (error) {
       throw new HttpException(
-        'Error al obtener el estado escolar',
+        'Error al obtener el tutor',
         HttpStatus.BAD_REQUEST,
         error,
       );
@@ -63,15 +76,12 @@ export class EstadoEscolarController {
 
   @Patch(':id')
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
-  update(
-    @Param('id') id: string,
-    @Body() updateEstadoEscolarDto: UpdateEstadoEscolarDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateTutoreDto: UpdateTutoreDto) {
     try {
-      return this.estadoEscolarService.update(+id, updateEstadoEscolarDto);
+      return this.tutoresService.update(+id, updateTutoreDto);
     } catch (error) {
       throw new HttpException(
-        'Error al actualizar el estado escolar',
+        'Error al actualizar el tutor',
         HttpStatus.BAD_REQUEST,
         error,
       );
@@ -82,10 +92,10 @@ export class EstadoEscolarController {
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   remove(@Param('id') id: string) {
     try {
-      return this.estadoEscolarService.remove(+id);
+      return this.tutoresService.remove(+id);
     } catch (error) {
       throw new HttpException(
-        'Error al eliminar el estado escolar',
+        'Error al eliminar el tutor',
         HttpStatus.BAD_REQUEST,
         error,
       );

@@ -7,10 +7,12 @@ import { ConfigService } from '@nestjs/config';
 import { ConfigKeys } from 'src/config-keys.enum';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
 import { APP_GUARD } from '@nestjs/core';
+import { TutoresModule } from 'src/tutores/tutores.module';
 
 @Module({
   imports: [
     UsuariosModule,
+    TutoresModule,
     JwtModule.registerAsync({
       global: true,
       useFactory: (configService: ConfigService) => ({

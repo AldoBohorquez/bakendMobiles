@@ -4,13 +4,15 @@ import { IsDate, IsString } from 'class-validator';
 
 export class UpdateEstudianteDto extends PartialType(CreateEstudianteDto) {
   @IsString()
-  nombreCompleto: string;
+  nombre: string;
+
+  @IsString()
+  apellidoP: string;
+
+  @IsString()
+  apellidoM: string;
   @IsDate()
   fecha_nacimiento: Date;
-  @IsString()
-  email: string;
-  @IsString()
-  telefono: string;
   @IsString()
   direccion: string;
 }

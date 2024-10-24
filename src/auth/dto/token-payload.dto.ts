@@ -3,4 +3,5 @@ export class TokenPayloadDTO {
   ip: string; //ip del usuario
   iat?: number; //issued at //fecha de emisión
   exp?: number; //expiration //fecha de expiración
+  type: 'TUTOR' | 'USUARIO';
 }

@@ -4,25 +4,48 @@ import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EstudiantesRepository } from './estudiantes.repository';
 import { EstudianteEntity } from './entities/estudiante.entity';
+import { TutoresRepository } from 'src/tutores/tutores.repository';
+import { SocketsAdminGateway } from '../sockets-admin/sockets-admin.gateway';
+import { EventosAdmin } from 'src/sockets-admin/eventos-admin.enum';
+import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
+import { mkdirSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class EstudiantesService {
   constructor(
     @InjectRepository(EstudiantesRepository)
     private readonly estudiantesRepository: EstudiantesRepository,
+    @InjectRepository(TutoresRepository)
+    private readonly tutoresRepository: TutoresRepository,
+    private readonly socketsAdminGateway: SocketsAdminGateway,
   ) {}
 
   async create(
     createEstudianteDto: CreateEstudianteDto,
+    file: Express.Multer.File,
   ): Promise<EstudianteEntity | NotFoundException> {
-    const verifyEmail = await this.estudiantesRepository.findByEmail(
-      createEstudianteDto.email,
-    );
-    if (!verifyEmail) {
-      return new NotFoundException('El correo ya se encuentra registrado');
-    }
     const bodyEstudent = this.estudiantesRepository.create(createEstudianteDto);
-    return await this.estudiantesRepository.save(bodyEstudent);
+    bodyEstudent.tutor = await this.tutoresRepository.findById(
+      createEstudianteDto.id_tutor,
+    );
+    const estudianteCreado =
+      await this.estudiantesRepository.save(bodyEstudent);
+    mkdirSync('./uploads/estudiantes/' + estudianteCreado.id_estudiante, {
+      recursive: true,
+    });
+    const fotoEstudianteFolder =
+      './uploads/estudiantes/' + estudianteCreado.id_estudiante + '/foto.jpg';
+    if (file) {
+      writeFileSync(fotoEstudianteFolder, file.buffer);
+    }
+    this.socketsAdminGateway.emit(
+      PerfilesEnum.ADMIN,
+      EventosAdmin.estudiante_creado,
+      {
+        nombre: estudianteCreado.nombre,
+      },
+    );
+    return estudianteCreado;
   }
 
   async findAll(): Promise<EstudianteEntity[] | { message: string }> {
@@ -38,6 +61,11 @@ export class EstudiantesService {
     if (!userFind) {
       return { message: 'Estudiante no encontrado' };
     }
+    return userFind;
+  }
+
+  async findOneByUuid(uuid: string): Promise<EstudianteEntity> {
+    const userFind = await this.estudiantesRepository.findByUuid(uuid);
     return userFind;
   }
 

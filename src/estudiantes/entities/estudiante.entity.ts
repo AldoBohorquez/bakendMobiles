@@ -1,40 +1,54 @@
-import { AsistenciaEntity } from 'src/asistencias/entities/asistencia.entity';
 import { EstadoEscolarEntity } from 'src/estado-escolar/entities/estado-escolar.entity';
+import { ResponsableEntity } from 'src/responsables/entities/responsable.entity';
+import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-Entity('estudiantes');
+@Entity('estudiantes')
 export class EstudianteEntity {
   @PrimaryGeneratedColumn()
   id_estudiante: number;
 
   @Column()
+  @Generated('uuid')
+  @Index()
+  uuid: string;
+
+  @Column()
   nombre: string;
 
   @Column()
-  apellido: string;
+  apellidoP: string;
+
+  @Column()
+  apellidoM: string;
 
   @Column({ type: 'date' })
   fecha_nacimiento: Date;
 
   @Column()
-  email: string;
-
-  @Column({ type: 'varchar', length: 10 })
-  telefono: string;
-
-  @Column()
   direccion: string;
 
-  @OneToMany(() => AsistenciaEntity, (asistencia) => asistencia.estudiante, {
+  @OneToMany(() => ResponsableEntity, (responsable) => responsable.estudiante, {
     nullable: true,
   })
-  asistencias: AsistenciaEntity[];
+  responsables: ResponsableEntity[];
+
+  @ManyToOne(() => TutoresEntity, (tutor) => tutor.estudiantes)
+  tutor: TutoresEntity;
+
+  @ManyToOne(
+    () => EstadoEscolarEntity,
+    (estado_escolar) => estado_escolar.estudiantes,
+  )
+  estado_escolar: EstadoEscolarEntity;
 }

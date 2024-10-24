@@ -19,7 +19,7 @@ export class EstudiantesRepository extends Repository<EstudianteEntity> {
     return this.findOne({ where: { id_estudiante: id } });
   }
 
-  findByEmail(email: string): Promise<EstudianteEntity> {
-    return this.findOne({ where: { email: email.toLowerCase() } });
+  findByUuid(uuid: string): Promise<EstudianteEntity> {
+    return this.findOne({ where: { uuid: uuid } });
   }
 }

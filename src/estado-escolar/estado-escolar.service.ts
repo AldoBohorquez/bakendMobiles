@@ -3,31 +3,31 @@ import { CreateEstadoEscolarDto } from './dto/create-estado-escolar.dto';
 import { UpdateEstadoEscolarDto } from './dto/update-estado-escolar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { estadoEscolarRepository } from './estado-escolar.repository';
-import { NotFoundError } from 'rxjs';
 import { EstadoEscolarEntity } from './entities/estado-escolar.entity';
-import { AsistenciaRepository } from '../asistencias/asistencias.repository';
+import { EstudiantesRepository } from 'src/estudiantes/estudiantes.repository';
 
 @Injectable()
 export class EstadoEscolarService {
   constructor(
     @InjectRepository(estadoEscolarRepository)
     private readonly estadoEscolarRepository: estadoEscolarRepository,
-    @InjectRepository(AsistenciaRepository)
-    private readonly asistenciaRepository: AsistenciaRepository,
+    @InjectRepository(EstudiantesRepository)
+    private readonly estudiantesRepository: EstudiantesRepository,
   ) {}
   async create(
     createEstadoEscolarDto: CreateEstadoEscolarDto,
   ): Promise<EstadoEscolarEntity> {
-    const findAsistencia = await this.asistenciaRepository.findById(
-      createEstadoEscolarDto.id_asistencia,
+    const findEstudiante = await this.estudiantesRepository.findById(
+      createEstadoEscolarDto.id_estudiante,
     );
-    if (!findAsistencia) {
+    if (!findEstudiante) {
       throw new NotFoundException('Asistencia no encontrada');
     }
     const bodyEstadoEscolar = this.estadoEscolarRepository.create(
       createEstadoEscolarDto,
     );
-    bodyEstadoEscolar.asistencia = findAsistencia;
+    bodyEstadoEscolar.fecha_estado = new Date();
+    bodyEstadoEscolar.estudiantes = findEstudiante;
     return this.estadoEscolarRepository.save(bodyEstadoEscolar);
   }
 

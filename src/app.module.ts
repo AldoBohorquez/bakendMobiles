@@ -13,11 +13,22 @@ import { ConfigValidation } from './config-validation';
 import { SyslogEntity } from './syslog/entity/syslog.entity';
 import { SyslogModule } from './syslog/syslog.module';
 import { EstudiantesModule } from './estudiantes/estudiantes.module';
-import { AsistenciasModule } from './asistencias/asistencias.module';
 import { EstadoEscolarModule } from './estado-escolar/estado-escolar.module';
+import { TutoresModule } from './tutores/tutores.module';
+import { ResponsablesModule } from './responsables/responsables.module';
+import { EstadoEscolarEntity } from './estado-escolar/entities/estado-escolar.entity';
+import { EstudianteEntity } from './estudiantes/entities/estudiante.entity';
+import { ResponsableEntity } from './responsables/entities/responsable.entity';
+import { TutoresEntity } from './tutores/entities/tutore.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveStaticOptions: { extensions: ['jpg', 'jpeg', 'png'] },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: ConfigValidation,
@@ -41,7 +52,14 @@ import { EstadoEscolarModule } from './estado-escolar/estado-escolar.module';
           username: configService.get(ConfigKeys.DB_USERNAME),
           password: configService.get(ConfigKeys.DB_PASSWORD),
           database: configService.get(ConfigKeys.DB_DATABASE),
-          entities: [UsuarioEntity, SyslogEntity],
+          entities: [
+            UsuarioEntity,
+            SyslogEntity,
+            EstadoEscolarEntity,
+            EstudianteEntity,
+            ResponsableEntity,
+            TutoresEntity,
+          ],
           synchronize: true,
         };
       },
@@ -51,8 +69,9 @@ import { EstadoEscolarModule } from './estado-escolar/estado-escolar.module';
     SocketsAdminModule,
     SyslogModule,
     EstudiantesModule,
-    AsistenciasModule,
     EstadoEscolarModule,
+    TutoresModule,
+    ResponsablesModule,
   ],
   controllers: [],
   providers: [

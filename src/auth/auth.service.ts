@@ -4,11 +4,13 @@ import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDTO } from './dto/token-payload.dto';
 import { UsuarioEntity } from 'src/usuarios/entities/usuario.entity';
+import { TutoresService } from 'src/tutores/tutores.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usuariosService: UsuariosService,
+    private readonly tutoresService: TutoresService,
     private readonly jwtService: JwtService,
   ) {}
   async login(
@@ -19,18 +21,14 @@ export class AuthService {
     const usuario = await this.usuariosService.findByEmail(correo);
     //ver si el usuario existe,
     if (!usuario) {
-      throw new HttpException(
-        'Credenciales no válidas',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new HttpException('Correo no válidas', HttpStatus.UNAUTHORIZED);
     }
 
+    const bycrypt = require('bcrypt');
+
     //si la contraseña es correcta
-    if (usuario.contrasenia !== contrasenia) {
-      throw new HttpException(
-        'Credenciales no válidas',
-        HttpStatus.UNAUTHORIZED,
-      );
+    if (!bycrypt.compareSync(contrasenia, usuario.contrasenia)) {
+      throw new HttpException('Contraseña no válidas', HttpStatus.UNAUTHORIZED);
     }
 
     //este activo
@@ -39,7 +37,38 @@ export class AuthService {
     }
 
     //generar token
-    const payload: TokenPayloadDTO = { sub: usuario.id_usuario, ip };
+    const payload: TokenPayloadDTO = {
+      sub: usuario.id_usuario,
+      ip,
+      type: 'USUARIO',
+    };
+    const access_token = this.jwtService.sign(payload);
+
+    return {
+      access_token,
+    };
+  }
+
+  async loginTutores(
+    correo: string,
+    contrasenia: string,
+    ip: string,
+  ): Promise<LoginResponseDTO> {
+    const tutor = await this.tutoresService.findByEmail(correo);
+    //ver si el usuario existe,
+    if (!tutor) {
+      throw new HttpException('Correo no válidas', HttpStatus.UNAUTHORIZED);
+    }
+
+    const bycrypt = require('bcrypt');
+
+    //si la contraseña es correcta
+    if (!bycrypt.compareSync(contrasenia, tutor.contrasena)) {
+      throw new HttpException('Contraseña no válidas', HttpStatus.UNAUTHORIZED);
+    }
+
+    //generar token
+    const payload: TokenPayloadDTO = { sub: tutor.id_tutor, ip, type: 'TUTOR' };
     const access_token = this.jwtService.sign(payload);
 
     return {

@@ -17,6 +17,9 @@ import { IS_PROFILE_KEY } from './profile.decorator';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 import { Request } from 'express';
 import { UsuarioIdentityDTO } from 'src/usuarios/dto/usuario-identity.dto';
+import { UsuarioEntity } from 'src/usuarios/entities/usuario.entity';
+import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
+import { TutoresService } from 'src/tutores/tutores.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -24,6 +27,7 @@ export class JwtGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly usuariosService: UsuariosService,
+    private readonly tutoresService: TutoresService,
     private reflector: Reflector,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -59,7 +63,12 @@ export class JwtGuard implements CanActivate {
       throw new HttpException('Invalid token source', HttpStatus.UNAUTHORIZED);
     }
 
-    const user = await this.usuariosService.findById(payload.sub);
+    let user: UsuarioEntity | TutoresEntity | null = null;
+    if (payload.type == 'USUARIO') {
+      user = await this.usuariosService.findById(payload.sub);
+    } else if (payload.type == 'TUTOR') {
+      user = await this.tutoresService.findById(payload.sub);
+    }
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
@@ -74,13 +83,11 @@ export class JwtGuard implements CanActivate {
       IS_PROFILE_KEY,
       [context.getHandler(), context.getClass()],
     );
-    if (paraPerfiles) {
-      if (!paraPerfiles.includes(user.perfil)) {
-        throw new HttpException(
-          'User does not have the required profile: ' + paraPerfiles.join(', '),
-          HttpStatus.FORBIDDEN,
-        );
-      }
+    if (paraPerfiles && !paraPerfiles.includes(user.perfil)) {
+      throw new HttpException(
+        'User does not have the required profile: ' + paraPerfiles.join(', '),
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     request.user = await this.usuariosService.userIdentity(user);

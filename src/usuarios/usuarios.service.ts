@@ -6,6 +6,8 @@ import { UsuariosRepository } from './usuarios.repository';
 import { UsuarioEntity } from './entities/usuario.entity';
 import { PerfilesEnum } from './dto/perfiles.enum';
 import { UsuarioIdentityDTO } from './dto/usuario-identity.dto';
+import { LoginUserDto } from './dto/loginuser.dto';
+import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -52,20 +54,38 @@ export class UsuariosService {
         nombreCompleto: 'Super Usuario',
         correo: 'super@dominio.com',
         perfil: PerfilesEnum.SUPER,
-        contrasenia: '123456',
+        contrasenia: await this.encryptPassword('123456'),
         activo: true,
       });
       this.logger.verbose('First user created: ' + usuarioCreado.correo);
     }
   }
 
-  async userIdentity(user: UsuarioEntity): Promise<UsuarioIdentityDTO> {
-    return {
-      id_usuario: user.id_usuario,
-      correo: user.correo,
-      nombreCompleto: user.nombreCompleto,
-      perfil: user.perfil,
-      activo: true,
-    };
+  async encryptPassword(password: string): Promise<string> {
+    const bcrypt = require('bcrypt');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return hashedPassword;
+  }
+
+  async userIdentity(
+    user: UsuarioEntity | TutoresEntity,
+  ): Promise<UsuarioIdentityDTO> {
+    if (user instanceof UsuarioEntity) {
+      return {
+        id_usuario: user.id_usuario,
+        correo: user.correo,
+        nombreCompleto: user.nombreCompleto,
+        perfil: user.perfil,
+        activo: true,
+      };
+    } else if (user instanceof TutoresEntity) {
+      return {
+        id_tutor: user.id_tutor,
+        correo: user.correo,
+        nombreCompleto: user.nombre,
+        perfil: user.perfil,
+        activo: true,
+      };
+    }
   }
 }

@@ -1,14 +1,11 @@
 import { Repository } from 'typeorm';
 import { EstadoEscolarEntity } from './entities/estado-escolar.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AsistenciaEntity } from 'src/asistencias/entities/asistencia.entity';
 
 export class estadoEscolarRepository extends Repository<EstadoEscolarEntity> {
   constructor(
     @InjectRepository(EstadoEscolarEntity)
     repository: Repository<EstadoEscolarEntity>,
-    @InjectRepository(AsistenciaEntity)
-    asistenciaRepository: Repository<AsistenciaEntity>,
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }

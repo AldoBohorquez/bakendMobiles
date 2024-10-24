@@ -26,22 +26,26 @@ export class UsuariosController {
   }
 
   @Get()
+  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findAll() {
     return this.usuariosService.findAll();
   }
 
   @Get(':id')
+  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findOne(@Param('id') id: string) {
     return this.usuariosService.findOne(+id);
   }
 
   @Patch(':id')
+  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   @SyslogInclude('Modificar usuario')
   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
     return this.usuariosService.update(+id, updateUsuarioDto);
   }
 
   @Delete(':id')
+  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   @SyslogInclude('Borrar usuario')
   remove(@Param('id') id: string) {
     return this.usuariosService.remove(+id);

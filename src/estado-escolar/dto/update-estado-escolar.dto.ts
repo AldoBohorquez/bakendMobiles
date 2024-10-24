@@ -7,6 +7,4 @@ export class UpdateEstadoEscolarDto extends PartialType(
 ) {
   @IsString()
   estado: string;
-  @IsDate()
-  fecha_estado: Date;
 }

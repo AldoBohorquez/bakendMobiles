@@ -1,4 +1,3 @@
-import { AsistenciaEntity } from 'src/asistencias/entities/asistencia.entity';
 import { EstudianteEntity } from 'src/estudiantes/entities/estudiante.entity';
 import {
   Column,
@@ -19,6 +18,6 @@ export class EstadoEscolarEntity {
   @Column({ type: 'date' })
   fecha_estado: Date;
 
-  @ManyToOne(() => AsistenciaEntity, (asistencia) => asistencia.estado_escolar)
-  asistencia: AsistenciaEntity;
+  @ManyToOne(() => EstudianteEntity, (estudiante) => estudiante.estado_escolar)
+  estudiantes: EstudianteEntity;
 }

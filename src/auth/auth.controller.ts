@@ -37,6 +37,23 @@ export class AuthController {
     return userLoggedIn;
   }
 
+  @Post('login-tutores')
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @SyslogInclude('login-tutores', { body: true })
+  async loginTutores(
+    @Body() loginRequestDto: LoginRequestDto,
+    @Req() req: Request,
+  ): Promise<LoginResponseDTO> {
+    const userLoggedIn = await this.authService.loginTutores(
+      loginRequestDto.correo,
+      loginRequestDto.contrasenia,
+      req.ips ? req.ips[0] : req.ip, //pasar la ip para almacenar en el token
+    );
+
+    return userLoggedIn;
+  }
+
   @Get('perfil')
   @SkipThrottle()
   async pefil(
