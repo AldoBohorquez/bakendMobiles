@@ -19,11 +19,11 @@ import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('responsables')
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class ResponsablesController {
   constructor(private readonly responsablesService: ResponsablesService) {}
 
   @Post()
-  @IsProfile(PerfilesEnum.ADMIN)
   @UseInterceptors(FileInterceptor('foto'))
   create(
     @Body() createResponsableDto: CreateResponsableDto,
@@ -41,7 +41,6 @@ export class ResponsablesController {
   }
 
   @Get()
-  @IsProfile(PerfilesEnum.ADMIN)
   findAll() {
     try {
       return this.responsablesService.findAll();
@@ -55,7 +54,6 @@ export class ResponsablesController {
   }
 
   @Get(':id')
-  @IsProfile(PerfilesEnum.ADMIN)
   findOne(@Param('id') id: string) {
     try {
       return this.responsablesService.findOne(+id);
@@ -69,7 +67,6 @@ export class ResponsablesController {
   }
 
   @Patch(':id')
-  @IsProfile(PerfilesEnum.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateResponsableDto: UpdateResponsableDto,
@@ -86,7 +83,6 @@ export class ResponsablesController {
   }
 
   @Delete(':id')
-  @IsProfile(PerfilesEnum.ADMIN)
   remove(@Param('id') id: string) {
     try {
       return this.responsablesService.remove(+id);

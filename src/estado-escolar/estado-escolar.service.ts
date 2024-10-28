@@ -4,24 +4,23 @@ import { UpdateEstadoEscolarDto } from './dto/update-estado-escolar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { estadoEscolarRepository } from './estado-escolar.repository';
 import { EstadoEscolarEntity } from './entities/estado-escolar.entity';
-import { EstudiantesRepository } from 'src/estudiantes/estudiantes.repository';
+import { EstudiantesService } from 'src/estudiantes/estudiantes.service';
 
 @Injectable()
 export class EstadoEscolarService {
   constructor(
     @InjectRepository(estadoEscolarRepository)
     private readonly estadoEscolarRepository: estadoEscolarRepository,
-    @InjectRepository(EstudiantesRepository)
-    private readonly estudiantesRepository: EstudiantesRepository,
+    private readonly estudianteService: EstudiantesService,
   ) {}
   async create(
     createEstadoEscolarDto: CreateEstadoEscolarDto,
   ): Promise<EstadoEscolarEntity> {
-    const findEstudiante = await this.estudiantesRepository.findById(
+    const findEstudiante = await this.estudianteService.findOne(
       createEstadoEscolarDto.id_estudiante,
     );
     if (!findEstudiante) {
-      throw new NotFoundException('Asistencia no encontrada');
+      throw new NotFoundException('Estudiante no encontrado');
     }
     const bodyEstadoEscolar = this.estadoEscolarRepository.create(
       createEstadoEscolarDto,
@@ -31,25 +30,26 @@ export class EstadoEscolarService {
     return this.estadoEscolarRepository.save(bodyEstadoEscolar);
   }
 
-  async findAll(): Promise<EstadoEscolarEntity[] | NotFoundException> {
+  async findAll(): Promise<EstadoEscolarEntity[]> {
     const estadosEscolares = await this.estadoEscolarRepository.findAll();
-    if (!estadosEscolares) {
-      return new NotFoundException('No hay estados escolares registrados');
-    }
+    return estadosEscolares;
   }
 
-  async findOne(id: number): Promise<EstadoEscolarEntity | NotFoundException> {
+  async findOne(id: number): Promise<EstadoEscolarEntity> {
     const estadoEscolar = await this.estadoEscolarRepository.findById(id);
     if (!estadoEscolar) {
-      return new NotFoundException('Estado escolar no encontrado');
+      throw new NotFoundException('Estado escolar no encontrado');
     }
-    return new NotFoundException('Estado escolar no encontrado');
+    return estadoEscolar;
   }
 
   async update(
     id: number,
     updateEstadoEscolarDto: UpdateEstadoEscolarDto,
   ): Promise<EstadoEscolarEntity | NotFoundException> {
+    if (this.findOne(id)) {
+      throw new NotFoundException('Estado escolar no encontrado');
+    }
     const bodyEstadoescolar = this.estadoEscolarRepository.create(
       updateEstadoEscolarDto,
     );
@@ -57,16 +57,13 @@ export class EstadoEscolarService {
       id,
       bodyEstadoescolar,
     );
-    if (!estadoEscolar) {
-      return new NotFoundException('Estado escolar no encontrado');
-    }
     return estadoEscolar.raw;
   }
 
-  async remove(id: number): Promise<EstadoEscolarEntity | NotFoundException> {
+  async remove(id: number): Promise<EstadoEscolarEntity> {
     const estadoEscolar = await this.estadoEscolarRepository.findById(id);
     if (!estadoEscolar) {
-      return new NotFoundException('Estado escolar no encontrado');
+      throw new NotFoundException('Estado escolar no encontrado');
     }
     return this.estadoEscolarRepository.remove(estadoEscolar);
   }

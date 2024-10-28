@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,7 +8,6 @@ import { UpdateTutoreDto } from './dto/update-tutore.dto';
 import { TutoresRepository } from './tutores.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TutoresEntity } from './entities/tutore.entity';
-import { LoginTutoresDto } from './dto/tutores.dto';
 
 @Injectable()
 export class TutoresService {
@@ -29,15 +27,12 @@ export class TutoresService {
     return this.tutoresrepository.save(bodyTutor);
   }
 
-  async findAll(): Promise<TutoresEntity[] | NotFoundException> {
+  async findAll(): Promise<TutoresEntity[]> {
     const tutores = await this.tutoresrepository.findTutores();
-    if (!tutores) {
-      throw new NotFoundException('No hay tutores registrados');
-    }
     return tutores;
   }
 
-  async findOne(id: number): Promise<TutoresEntity | NotFoundException> {
+  async findOne(id: number): Promise<TutoresEntity> {
     const tutor = await this.tutoresrepository.findById(id);
     if (!tutor) {
       throw new NotFoundException('Tutor no encontrado');
@@ -56,19 +51,20 @@ export class TutoresService {
   async update(
     id: number,
     updateTutoreDto: UpdateTutoreDto,
-  ): Promise<TutoresEntity | NotFoundException> {
-    const bodyUpdate = this.tutoresrepository.create(updateTutoreDto);
-    const tutorUpdate = await this.tutoresrepository.update(id, bodyUpdate);
-    if (!tutorUpdate) {
-      return new NotFoundException('Tutor no encontrado');
+  ): Promise<TutoresEntity> {
+    const tutor = await this.tutoresrepository.findById(id);
+    if (!tutor) {
+      throw new NotFoundException('Tutor no encontrado');
     }
+    const bodyUpdate = this.tutoresrepository.create(updateTutoreDto);
+    const tutorUpdate = await this.tutoresrepository.update(tutor, bodyUpdate);
     return tutorUpdate.raw;
   }
 
-  async remove(id: number): Promise<TutoresEntity | NotFoundException> {
+  async remove(id: number): Promise<TutoresEntity> {
     const tutorDelete = await this.tutoresrepository.findById(id);
     if (!tutorDelete) {
-      return new NotFoundException('Tutor no encontrado');
+      throw new NotFoundException('Tutor no encontrado');
     }
     return tutorDelete;
   }
@@ -79,26 +75,6 @@ export class TutoresService {
       throw new NotFoundException('Tutor no encontrado');
     }
     return tutor;
-  }
-
-  async loginTutor(
-    loginTutorDto: LoginTutoresDto,
-  ): Promise<TutoresEntity | NotFoundException> {
-    const tutor = await this.tutoresrepository.findByEmail(
-      loginTutorDto.correo,
-    );
-    if (!tutor) {
-      return new NotFoundException('Correo no encontrado');
-    }
-    const bcrypt = require('bcrypt');
-    const match = await bcrypt.compare(
-      loginTutorDto.contrasena,
-      tutor.contrasena,
-    );
-    if (match) {
-      return tutor;
-    }
-    return new NotFoundException('Contraseña incorrecta');
   }
 
   async encryptPassword(password: string): Promise<string> {

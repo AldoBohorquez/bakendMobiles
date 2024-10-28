@@ -74,14 +74,15 @@ export class EstudiantesController {
   @Public()
   @Get(':uuid/foto.jpg')
   async fotoEstudiante(@Param('uuid') uuid: string, @Res() res: Response) {
-    const estudiante = await this.estudiantesService.findOneByUuid(uuid);
-    if (!estudiante) {
-      throw new HttpException('Estudiante no encontrado', HttpStatus.NOT_FOUND);
+    try {
+      return this.estudiantesService.findFotoEstudiante(uuid, res);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener la foto del estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
     }
-    const rutaFotoEstudiante = 'foto.jpg';
-    return res.sendFile(rutaFotoEstudiante, {
-      root: './uploads/estudiantes/' + estudiante.id_estudiante,
-    });
   }
 
   @Patch(':id')

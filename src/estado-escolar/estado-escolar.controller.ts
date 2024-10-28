@@ -16,11 +16,11 @@ import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('estado-escolar')
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class EstadoEscolarController {
   constructor(private readonly estadoEscolarService: EstadoEscolarService) {}
 
   @Post()
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   create(@Body() createEstadoEscolarDto: CreateEstadoEscolarDto) {
     try {
       return this.estadoEscolarService.create(createEstadoEscolarDto);
@@ -34,7 +34,6 @@ export class EstadoEscolarController {
   }
 
   @Get()
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findAll() {
     try {
       return this.estadoEscolarService.findAll();
@@ -48,7 +47,6 @@ export class EstadoEscolarController {
   }
 
   @Get(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findOne(@Param('id') id: string) {
     try {
       return this.estadoEscolarService.findOne(+id);
@@ -62,7 +60,6 @@ export class EstadoEscolarController {
   }
 
   @Patch(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateEstadoEscolarDto: UpdateEstadoEscolarDto,
@@ -79,7 +76,6 @@ export class EstadoEscolarController {
   }
 
   @Delete(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   remove(@Param('id') id: string) {
     try {
       return this.estadoEscolarService.remove(+id);

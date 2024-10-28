@@ -1,31 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EstudiantesRepository } from './estudiantes.repository';
 import { EstudianteEntity } from './entities/estudiante.entity';
-import { TutoresRepository } from 'src/tutores/tutores.repository';
 import { SocketsAdminGateway } from '../sockets-admin/sockets-admin.gateway';
 import { EventosAdmin } from 'src/sockets-admin/eventos-admin.enum';
 import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 import { mkdirSync, writeFileSync } from 'fs';
+import { IsProfile } from 'src/auth/jwt/profile.decorator';
+import { TutoresService } from 'src/tutores/tutores.service';
+import { Response } from 'express';
 
 @Injectable()
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class EstudiantesService {
   constructor(
     @InjectRepository(EstudiantesRepository)
     private readonly estudiantesRepository: EstudiantesRepository,
-    @InjectRepository(TutoresRepository)
-    private readonly tutoresRepository: TutoresRepository,
+    private readonly tutoresService: TutoresService,
     private readonly socketsAdminGateway: SocketsAdminGateway,
   ) {}
 
   async create(
     createEstudianteDto: CreateEstudianteDto,
     file: Express.Multer.File,
-  ): Promise<EstudianteEntity | NotFoundException> {
+  ): Promise<EstudianteEntity> {
     const bodyEstudent = this.estudiantesRepository.create(createEstudianteDto);
-    bodyEstudent.tutor = await this.tutoresRepository.findById(
+    bodyEstudent.tutor = await this.tutoresService.findById(
       createEstudianteDto.id_tutor,
     );
     const estudianteCreado =
@@ -48,45 +55,53 @@ export class EstudiantesService {
     return estudianteCreado;
   }
 
-  async findAll(): Promise<EstudianteEntity[] | { message: string }> {
+  async findAll(): Promise<EstudianteEntity[]> {
     const usersFind = await this.estudiantesRepository.findAll();
-    if (!usersFind) {
-      return { message: 'No hay estudiantes registrados' };
-    }
     return usersFind;
   }
 
-  async findOne(id: number): Promise<EstudianteEntity | { message: string }> {
+  async findOne(id: number): Promise<EstudianteEntity> {
     const userFind = await this.estudiantesRepository.findById(id);
     if (!userFind) {
-      return { message: 'Estudiante no encontrado' };
+      throw new NotFoundException('Estudiante no encontrado');
     }
     return userFind;
   }
 
   async findOneByUuid(uuid: string): Promise<EstudianteEntity> {
     const userFind = await this.estudiantesRepository.findByUuid(uuid);
+    if (!userFind) {
+      throw new NotFoundException('Estudiante no encontrado');
+    }
     return userFind;
   }
 
   async update(
     id: number,
     updateEstudianteDto: UpdateEstudianteDto,
-  ): Promise<EstudianteEntity | { message: string }> {
+  ): Promise<EstudianteEntity> {
     const bodyUpdate =
       await this.estudiantesRepository.create(updateEstudianteDto);
     const userUpdate = await this.estudiantesRepository.update(id, bodyUpdate);
-    if (!userUpdate) {
-      return { message: 'Estudiante no encontrado' };
-    }
     return userUpdate.raw;
   }
 
-  async remove(id: number): Promise<EstudianteEntity | { message: string }> {
+  async remove(id: number): Promise<EstudianteEntity> {
     const userFind = await this.estudiantesRepository.findById(id);
     if (!userFind) {
-      return { message: 'Estudiante no encontrado' };
+      throw new NotFoundException('Estudiante no encontrado');
     }
     return this.estudiantesRepository.remove(userFind);
+  }
+
+  async findFotoEstudiante(uuid: string, res: Response) {
+    const estudiante = await this.estudiantesRepository.findByUuid(uuid);
+    if (!estudiante) {
+      throw new HttpException('Estudiante no encontrado', HttpStatus.NOT_FOUND);
+    }
+    const rutaFotoEstudiante = 'foto.jpg';
+    return res.sendFile(rutaFotoEstudiante, {
+      root: './uploads/estudiantes/' + estudiante.id_estudiante,
+    });
   }
 }
