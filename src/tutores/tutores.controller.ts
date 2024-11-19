@@ -19,19 +19,6 @@ import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 export class TutoresController {
   constructor(private readonly tutoresService: TutoresService) {}
 
-  @Post('login')
-  login(@Body() loginTutoreDto: CreateTutoreDto) {
-    try {
-      return this.tutoresService.loginTutor(loginTutoreDto);
-    } catch (error) {
-      throw new HttpException(
-        'Error al iniciar sesión',
-        HttpStatus.BAD_REQUEST,
-        error,
-      );
-    }
-  }
-
   @Post()
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   create(@Body() createTutoreDto: CreateTutoreDto) {
