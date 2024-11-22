@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { EstadoEscolarEntity } from 'src/estado-escolar/entities/estado-escolar.entity';
 import { ResponsableEntity } from 'src/responsables/entities/responsable.entity';
 import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
@@ -33,6 +34,7 @@ export class EstudianteEntity {
   apellidoM: string;
 
   @Column({ type: 'date' })
+  @Type(() => Date)
   fecha_nacimiento: Date;
 
   @Column()
