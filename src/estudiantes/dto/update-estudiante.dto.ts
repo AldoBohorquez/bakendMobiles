@@ -11,8 +11,8 @@ export class UpdateEstudianteDto extends PartialType(CreateEstudianteDto) {
 
   @IsString()
   apellidoM: string;
-  @IsDate()
-  fecha_nacimiento: Date;
+  @IsString()
+  fecha_nacimiento: string;
   @IsString()
   direccion: string;
 }
