@@ -34,7 +34,6 @@ export class EstudianteEntity {
   apellidoM: string;
 
   @Column({ type: 'date' })
-  @Type(() => Date)
   fecha_nacimiento: Date;
 
   @Column()

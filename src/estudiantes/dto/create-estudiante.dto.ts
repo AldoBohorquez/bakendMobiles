@@ -1,4 +1,5 @@
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateEstudianteDto {
   @IsString()
@@ -9,8 +10,8 @@ export class CreateEstudianteDto {
 
   @IsString()
   apellidoM: string;
-  @IsDate()
-  fecha_nacimiento: Date;
+  @IsString()
+  fecha_nacimiento: string;
   @IsString()
   direccion: string;
   @IsNumber()

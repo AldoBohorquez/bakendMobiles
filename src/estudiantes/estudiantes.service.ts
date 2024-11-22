@@ -35,6 +35,7 @@ export class EstudiantesService {
     bodyEstudent.tutor = await this.tutoresService.findById(
       createEstudianteDto.id_tutor,
     );
+    bodyEstudent.fecha_nacimiento = new Date(createEstudianteDto.fecha_nacimiento);
     const estudianteCreado =
       await this.estudiantesRepository.save(bodyEstudent);
     mkdirSync('./uploads/estudiantes/' + estudianteCreado.id_estudiante, {
