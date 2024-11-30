@@ -47,9 +47,12 @@ export class EstudianteEntity {
   @ManyToOne(() => TutoresEntity, (tutor) => tutor.estudiantes)
   tutor: TutoresEntity;
 
-  @ManyToOne(
+  @OneToMany(
     () => EstadoEscolarEntity,
     (estado_escolar) => estado_escolar.estudiantes,
+    {
+      nullable: true,
+    }
   )
-  estado_escolar: EstadoEscolarEntity;
+  estado_escolar: EstadoEscolarEntity[];
 }

@@ -16,6 +16,7 @@ import { mkdirSync, writeFileSync } from 'fs';
 import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { TutoresService } from 'src/tutores/tutores.service';
 import { Response } from 'express';
+import { ResponseEstudianteDto } from './dto/response-estudiante.dto';
 
 @Injectable()
 @IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
@@ -35,7 +36,9 @@ export class EstudiantesService {
     bodyEstudent.tutor = await this.tutoresService.findById(
       createEstudianteDto.id_tutor,
     );
-    bodyEstudent.fecha_nacimiento = new Date(createEstudianteDto.fecha_nacimiento);
+    bodyEstudent.fecha_nacimiento = new Date(
+      createEstudianteDto.fecha_nacimiento,
+    );
     const estudianteCreado =
       await this.estudiantesRepository.save(bodyEstudent);
     mkdirSync('./uploads/estudiantes/' + estudianteCreado.id_estudiante, {
@@ -56,17 +59,65 @@ export class EstudiantesService {
     return estudianteCreado;
   }
 
-  async findAll(): Promise<EstudianteEntity[]> {
+  async findAll(): Promise<ResponseEstudianteDto[]> {
     const usersFind = await this.estudiantesRepository.findAll();
-    return usersFind;
+    const usersResponse: ResponseEstudianteDto[] = usersFind.map(
+      (estudiante) => {
+        const ultimoEstadoEscolar =
+          estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
+        return {
+          nombre: estudiante.nombre,
+          apellidoP: estudiante.apellidoP,
+          apellidoM: estudiante.apellidoM,
+          fecha_nacimiento: estudiante.fecha_nacimiento,
+          direccion: estudiante.direccion,
+          tutor: estudiante.tutor,
+          estado_escolar: ultimoEstadoEscolar,
+          responsables: estudiante.responsables,
+        };
+      },
+    );
+    return usersResponse;
   }
 
-  async findOne(id: number): Promise<EstudianteEntity> {
+  async findAllByTutor(idTutor: number): Promise<ResponseEstudianteDto[]> {
+    const usersFind = await this.estudiantesRepository.findAllByTutor(idTutor);
+    const usersResponse: ResponseEstudianteDto[] = usersFind.map(
+      (estudiante) => {
+        const ultimoEstadoEscolar =
+          estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
+        return {
+          nombre: estudiante.nombre,
+          apellidoP: estudiante.apellidoP,
+          apellidoM: estudiante.apellidoM,
+          fecha_nacimiento: estudiante.fecha_nacimiento,
+          direccion: estudiante.direccion,
+          tutor: estudiante.tutor,
+          estado_escolar: ultimoEstadoEscolar,
+          responsables: estudiante.responsables,
+        };
+      },
+    );
+    return usersResponse;
+  }
+
+  async findOne(id: number): Promise<ResponseEstudianteDto> {
     const userFind = await this.estudiantesRepository.findById(id);
     if (!userFind) {
       throw new NotFoundException('Estudiante no encontrado');
     }
-    return userFind;
+    const userReponse: ResponseEstudianteDto = {
+      nombre: userFind.nombre,
+      apellidoP: userFind.apellidoP,
+      apellidoM: userFind.apellidoM,
+      fecha_nacimiento: userFind.fecha_nacimiento,
+      direccion: userFind.direccion,
+      tutor: userFind.tutor,
+      estado_escolar:
+        userFind.estado_escolar[userFind.estado_escolar.length - 1],
+      responsables: userFind.responsables,
+    };
+    return userReponse;
   }
 
   async findOneByUuid(uuid: string): Promise<EstudianteEntity> {
