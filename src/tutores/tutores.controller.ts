@@ -61,6 +61,20 @@ export class TutoresController {
     }
   }
 
+  @Get(':id/estudiantes')
+  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
+  findEstudiantes(@Param('id') id: string) {
+    try {
+      return this.tutoresService.findEstudiantes(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener los estudiantes del tutor',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
+  }
+
   @Patch(':id')
   @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   update(@Param('id') id: string, @Body() updateTutoreDto: UpdateTutoreDto) {
