@@ -19,7 +19,7 @@ export class ResponsablesService {
     createResponsableDto: CreateResponsableDto,
     file: Express.Multer.File,
   ): Promise<ResponsableEntity> {
-    const findEstudiante = await this.estudiantesService.findOne(
+    const findEstudiante = await this.estudiantesService.findEstudianteEntity(
       createResponsableDto.id_estudiante,
     );
     if (!findEstudiante) {

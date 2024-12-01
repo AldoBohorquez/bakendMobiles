@@ -80,6 +80,14 @@ export class EstudiantesService {
     return usersResponse;
   }
 
+  async findEstudianteEntity(id: number): Promise<EstudianteEntity> {
+    const userFind = await this.estudiantesRepository.findById(id);
+    if (!userFind) {
+      throw new NotFoundException('Estudiante no encontrado');
+    }
+    return userFind;
+  }
+
   async findAllByTutor(idTutor: number): Promise<ResponseEstudianteDto[]> {
     const usersFind = await this.estudiantesRepository.findAllByTutor(idTutor);
     const usersResponse: ResponseEstudianteDto[] = usersFind.map(

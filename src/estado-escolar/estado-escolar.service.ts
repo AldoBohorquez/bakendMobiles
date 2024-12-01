@@ -16,7 +16,7 @@ export class EstadoEscolarService {
   async create(
     createEstadoEscolarDto: CreateEstadoEscolarDto,
   ): Promise<EstadoEscolarEntity> {
-    const findEstudiante = await this.estudianteService.findOne(
+    const findEstudiante = await this.estudianteService.findEstudianteEntity(
       createEstadoEscolarDto.id_estudiante,
     );
     if (!findEstudiante) {
