@@ -58,6 +58,19 @@ export class EstudiantesController {
     }
   }
 
+  @Get('tutor/:id')
+  findAllByTutor(@Param('id') id: string) {
+    try {
+      return this.estudiantesService.findAllByTutor(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener los estudiantes del tutor',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
