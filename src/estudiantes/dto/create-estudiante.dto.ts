@@ -14,6 +14,6 @@ export class CreateEstudianteDto {
   fecha_nacimiento: string;
   @IsString()
   direccion: string;
-  @IsNumber()
-  id_tutor: number;
+  @IsString()
+  id_tutor: string;
 }

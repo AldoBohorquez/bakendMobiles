@@ -34,7 +34,7 @@ export class EstudiantesService {
   ): Promise<EstudianteEntity> {
     const bodyEstudent = this.estudiantesRepository.create(createEstudianteDto);
     bodyEstudent.tutor = await this.tutoresService.findById(
-      createEstudianteDto.id_tutor,
+      Number(createEstudianteDto.id_tutor),
     );
     bodyEstudent.fecha_nacimiento = new Date(
       createEstudianteDto.fecha_nacimiento,
