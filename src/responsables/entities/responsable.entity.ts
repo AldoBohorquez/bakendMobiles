@@ -12,9 +12,6 @@ export class ResponsableEntity {
   @Column()
   parentesco: string;
 
-  @Column({ nullable: true })
-  foto: string;
-
   @ManyToOne(() => EstudianteEntity, (estudiante) => estudiante.responsables)
   estudiante: EstudianteEntity;
 }

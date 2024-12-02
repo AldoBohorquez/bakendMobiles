@@ -3,6 +3,7 @@ import { ResponsableEntity } from 'src/responsables/entities/responsable.entity'
 import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
 
 export class ResponseEstudianteDto {
+  id_estudiante: number;
   nombre: string;
 
   apellidoP: string;

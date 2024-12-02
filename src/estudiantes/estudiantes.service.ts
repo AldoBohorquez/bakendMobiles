@@ -76,6 +76,7 @@ export class EstudiantesService {
         const ultimoEstadoEscolar =
           estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
         return {
+          id_estudiante: estudiante.id_estudiante,
           nombre: estudiante.nombre,
           apellidoP: estudiante.apellidoP,
           apellidoM: estudiante.apellidoM,
@@ -106,6 +107,7 @@ export class EstudiantesService {
         const ultimoEstadoEscolar =
           estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
         return {
+          id_estudiante: estudiante.id_estudiante,
           nombre: estudiante.nombre,
           apellidoP: estudiante.apellidoP,
           apellidoM: estudiante.apellidoM,
@@ -127,6 +129,7 @@ export class EstudiantesService {
       throw new NotFoundException('Estudiante no encontrado');
     }
     const userReponse: ResponseEstudianteDto = {
+      id_estudiante: userFind.id_estudiante,
       nombre: userFind.nombre,
       apellidoP: userFind.apellidoP,
       apellidoM: userFind.apellidoM,

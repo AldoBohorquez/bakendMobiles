@@ -7,6 +7,7 @@ import { ResponsableRepository } from './responsables.repository';
 import { EstudiantesService } from 'src/estudiantes/estudiantes.service';
 import { mkdir, mkdirSync, writeFileSync } from 'fs';
 import { UpdateResult } from 'typeorm';
+import { responseResponsableDto } from './dto/response-responsable.dto';
 
 @Injectable()
 export class ResponsablesService {
@@ -20,7 +21,7 @@ export class ResponsablesService {
     file: Express.Multer.File,
   ): Promise<ResponsableEntity> {
     const findEstudiante = await this.estudiantesService.findEstudianteEntity(
-      createResponsableDto.id_estudiante,
+      Number(createResponsableDto.id_estudiante),
     );
     if (!findEstudiante) {
       throw new NotFoundException('Estudiante no encontrado');
@@ -42,14 +43,32 @@ export class ResponsablesService {
     return responsableSave;
   }
 
-  async findAll(): Promise<ResponsableEntity[]> {
+  async findAll(): Promise<responseResponsableDto[]> {
     const responsables = await this.responsableRepository.find();
-    return responsables;
+    const responseResponsables = responsables.map((responsable) => {
+      return {
+        id_responsable: responsable.id_responsable,
+        nombre: responsable.nombre,
+        parentesco: responsable.parentesco,
+        ruta_foto: 'responsables/' + responsable.id_responsable + '/foto.jpg',
+        estudiante: responsable.estudiante,
+      };
+    });
+    return responseResponsables;
   }
 
-  async findOne(id: number): Promise<ResponsableEntity> {
+  async findOne(id: number): Promise<responseResponsableDto> {
     const responsable = await this.responsableRepository.findById(id);
-    return responsable;
+    if (!responsable) {
+      throw new NotFoundException('Responsable no encontrado');
+    }
+    return {
+      id_responsable: responsable.id_responsable,
+      nombre: responsable.nombre,
+      parentesco: responsable.parentesco,
+      ruta_foto: 'responsables/' + responsable.id_responsable + '/foto.jpg',
+      estudiante: responsable.estudiante,
+    };
   }
 
   async update(

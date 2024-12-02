@@ -7,6 +7,6 @@ export class CreateResponsableDto {
   @IsString()
   parentesco: string;
 
-  @IsNumber()
-  id_estudiante: number;
+  @IsString()
+  id_estudiante: string;
 }
