@@ -84,6 +84,7 @@ export class EstudiantesService {
           tutor: estudiante.tutor,
           estado_escolar: ultimoEstadoEscolar,
           responsables: estudiante.responsables,
+          ruta_foto: 'estudiantes/' + estudiante.id_estudiante + '/foto.jpg',
         };
       },
     );
@@ -113,6 +114,7 @@ export class EstudiantesService {
           tutor: estudiante.tutor,
           estado_escolar: ultimoEstadoEscolar,
           responsables: estudiante.responsables,
+          ruta_foto: 'estudiantes/' + estudiante.id_estudiante + '/foto.jpg',
         };
       },
     );
@@ -134,6 +136,7 @@ export class EstudiantesService {
       estado_escolar:
         userFind.estado_escolar[userFind.estado_escolar.length - 1],
       responsables: userFind.responsables,
+      ruta_foto: 'estudiantes/' + userFind.id_estudiante + '/foto.jpg',
     };
     return userReponse;
   }
