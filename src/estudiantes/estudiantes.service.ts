@@ -59,6 +59,16 @@ export class EstudiantesService {
     return estudianteCreado;
   }
 
+  async imageEstudiante(id: number) {
+    const estudiante = await this.estudiantesRepository.findById(id);
+    if (!estudiante) {
+      throw new NotFoundException('Estudiante no encontrado');
+    }
+    const rutaFotoEstudiante =
+      'estudiantes/' + estudiante.id_estudiante + '/foto.jpg';
+    return rutaFotoEstudiante;
+  }
+
   async findAll(): Promise<ResponseEstudianteDto[]> {
     const usersFind = await this.estudiantesRepository.findAll();
     const usersResponse: ResponseEstudianteDto[] = usersFind.map(

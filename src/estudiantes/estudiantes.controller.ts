@@ -45,6 +45,19 @@ export class EstudiantesController {
     }
   }
 
+  @Get('imagen/:id')
+  async getImagen(@Param('id') id: string) {
+    try {
+      return this.estudiantesService.imageEstudiante(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener la imagen del estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
+  }
+
   @Get()
   findAll() {
     try {
