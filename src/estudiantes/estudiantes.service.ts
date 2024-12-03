@@ -82,7 +82,6 @@ export class EstudiantesService {
         const imagePath = path.join(
           __dirname,
           '..',
-          'uploads',
           'estudiantes',
           `${estudiante.id_estudiante}`,
           'foto.jpg',
@@ -135,7 +134,6 @@ export class EstudiantesService {
         const imagePath = path.join(
           __dirname,
           '..',
-          'uploads',
           'estudiantes',
           `${estudiante.id_estudiante}`,
           'foto.jpg',
