@@ -14,7 +14,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const syslogService = app.get(SyslogService);
   app.use(compression());
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: false }));
   app.enableCors({
     origin: configService.get<string>(ConfigKeys.CORS_ORIGIN),
     methods: 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
