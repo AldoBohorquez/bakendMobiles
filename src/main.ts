@@ -29,7 +29,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.use(
     '/uploads',
-    express.static(join(__dirname, 'uploads', 'estudiantes', 'responsables')),
+    express.static(join(__dirname, 'uploads', 'estudiantes', 'responsables'), {
+      setHeaders: (res: express.Response) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      },
+    }),
   );
 
   app.useGlobalInterceptors(
