@@ -14,5 +14,5 @@ export class ResponseEstudianteDto {
   tutor: TutoresEntity;
   estado_escolar: EstadoEscolarEntity;
   responsables: ResponsableEntity[];
-  foto: string;
+  ruta_foto: string;
 }
