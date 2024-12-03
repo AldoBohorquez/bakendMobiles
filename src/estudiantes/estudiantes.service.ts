@@ -17,6 +17,8 @@ import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { TutoresService } from 'src/tutores/tutores.service';
 import { Response } from 'express';
 import { ResponseEstudianteDto } from './dto/response-estudiante.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 @IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
@@ -75,6 +77,29 @@ export class EstudiantesService {
       (estudiante) => {
         const ultimoEstadoEscolar =
           estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
+
+        // Construir la ruta completa de la foto del estudiante
+        const imagePath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          'estudiantes',
+          `${estudiante.id_estudiante}`,
+          'foto.jpg',
+        );
+
+        // Leer y convertir la foto a Base64
+        let imageBase64: string | null = null;
+        try {
+          const imageBuffer = fs.readFileSync(imagePath);
+          imageBase64 = imageBuffer.toString('base64');
+        } catch (error) {
+          console.error(
+            `No se pudo leer la foto del estudiante ${estudiante.id_estudiante}:`,
+            error,
+          );
+        }
+
         return {
           id_estudiante: estudiante.id_estudiante,
           nombre: estudiante.nombre,
@@ -85,7 +110,7 @@ export class EstudiantesService {
           tutor: estudiante.tutor,
           estado_escolar: ultimoEstadoEscolar,
           responsables: estudiante.responsables,
-          ruta_foto: 'estudiantes/' + estudiante.id_estudiante + '/foto.jpg',
+          foto: imageBase64, // Se incluye la foto en formato Base64
         };
       },
     );
@@ -99,13 +124,35 @@ export class EstudiantesService {
     }
     return userFind;
   }
-
   async findAllByTutor(idTutor: number): Promise<ResponseEstudianteDto[]> {
     const usersFind = await this.estudiantesRepository.findAllByTutor(idTutor);
     const usersResponse: ResponseEstudianteDto[] = usersFind.map(
       (estudiante) => {
         const ultimoEstadoEscolar =
           estudiante.estado_escolar[estudiante.estado_escolar.length - 1];
+
+        // Construir la ruta completa de la foto del estudiante
+        const imagePath = path.join(
+          __dirname,
+          '..',
+          'uploads',
+          'estudiantes',
+          `${estudiante.id_estudiante}`,
+          'foto.jpg',
+        );
+
+        // Leer y convertir la foto a Base64
+        let imageBase64: string | null = null;
+        try {
+          const imageBuffer = fs.readFileSync(imagePath);
+          imageBase64 = imageBuffer.toString('base64');
+        } catch (error) {
+          console.error(
+            `No se pudo leer la foto del estudiante ${estudiante.id_estudiante}:`,
+            error,
+          );
+        }
+
         return {
           id_estudiante: estudiante.id_estudiante,
           nombre: estudiante.nombre,
@@ -116,7 +163,7 @@ export class EstudiantesService {
           tutor: estudiante.tutor,
           estado_escolar: ultimoEstadoEscolar,
           responsables: estudiante.responsables,
-          ruta_foto: 'estudiantes/' + estudiante.id_estudiante + '/foto.jpg',
+          foto: imageBase64, // Foto en Base64 o null si no se encontró
         };
       },
     );
@@ -139,7 +186,7 @@ export class EstudiantesService {
       estado_escolar:
         userFind.estado_escolar[userFind.estado_escolar.length - 1],
       responsables: userFind.responsables,
-      ruta_foto: 'estudiantes/' + userFind.id_estudiante + '/foto.jpg',
+      foto: 'estudiantes/' + userFind.id_estudiante + '/foto.jpg',
     };
     return userReponse;
   }
