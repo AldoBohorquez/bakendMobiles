@@ -8,8 +8,9 @@ import helmet from 'helmet';
 import { SyslogInterceptor } from './syslog/interceptors/syslog.interceptor';
 import { SyslogService } from './syslog/syslog.service';
 import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
-  const app = await NestFactory.create<NestApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const syslogService = app.get(SyslogService);
   app.use(compression());
@@ -20,7 +21,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
-
+  app.set('trust proxy', 1);
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
