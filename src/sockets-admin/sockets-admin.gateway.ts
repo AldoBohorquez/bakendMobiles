@@ -19,7 +19,6 @@ import { EventosAdmin } from './eventos-admin.enum';
 
 @WebSocketGateway({
   transports: ['websocket'],
-  path: '/admin',
 })
 @UseGuards(SocketsAdminGuard)
 export class SocketsAdminGateway
