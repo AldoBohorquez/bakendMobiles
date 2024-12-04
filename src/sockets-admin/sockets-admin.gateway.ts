@@ -38,36 +38,29 @@ export class SocketsAdminGateway
       client.emit('exception', new WsException('Token no proporcionado'));
       client.disconnect();
     }
-    this.authService
-      .validateToken(client.handshake.auth.token)
-      .then((user) => {
-        if (!user) {
-          client.emit('exception', new WsException('Usuario no encontrado'));
-          client.disconnect();
-        }
-
-        if (!user.activo) {
-          client.emit('exception', new WsException('Usuario inactivo'));
-          client.disconnect();
-        }
-
-        client.data1 = {
-          user,
-        };
-
-        this.logger.log(
-          `Client connected: ${client.id} - ${client.data.user.correo} (${client.data.user.perfil})`,
-        );
-
-        this.emit('todos', EventosAdmin.usuario_entrando, {
-          correo: client.data.user.correo,
-        });
-      })
-      .catch((error) => {
-        this.logger.error(error);
-        client.emit('exception', new WsException('Token inválido'));
+    this.authService.validateToken(client.handshake.auth.token).then((user) => {
+      if (!user) {
+        client.emit('exception', new WsException('Usuario no encontrado'));
         client.disconnect();
+      }
+
+      if (!user.activo) {
+        client.emit('exception', new WsException('Usuario inactivo'));
+        client.disconnect();
+      }
+
+      client.data1 = {
+        user,
+      };
+
+      this.logger.log(
+        `Client connected: ${client.id} - ${client.data.user.correo} (${client.data.user.perfil})`,
+      );
+
+      this.emit('todos', EventosAdmin.usuario_entrando, {
+        correo: client.data.user.correo,
       });
+    });
 
     this.authService
       .validateTokenTutor(client.handshake.auth.token)
