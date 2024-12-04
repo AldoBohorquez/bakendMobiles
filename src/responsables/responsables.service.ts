@@ -57,6 +57,29 @@ export class ResponsablesService {
     return responseResponsables;
   }
 
+  async findResponsablesEstudiante(
+    id_estudiante: number,
+  ): Promise<responseResponsableDto[]> {
+    const findEstudiante =
+      await this.estudiantesService.findEstudianteEntity(id_estudiante);
+    if (!findEstudiante) {
+      throw new NotFoundException('Estudiante no encontrado');
+    }
+    const responsables = await this.responsableRepository.find({
+      where: { estudiante: findEstudiante },
+    });
+    const responseResponsables = responsables.map((responsable) => {
+      return {
+        id_responsable: responsable.id_responsable,
+        nombre: responsable.nombre,
+        parentesco: responsable.parentesco,
+        ruta_foto: 'responsables/' + responsable.id_responsable + '/foto.jpg',
+        estudiante: responsable.estudiante,
+      };
+    });
+    return responseResponsables;
+  }
+
   async findOne(id: number): Promise<responseResponsableDto> {
     const responsable = await this.responsableRepository.findById(id);
     if (!responsable) {

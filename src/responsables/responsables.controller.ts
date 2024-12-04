@@ -53,6 +53,19 @@ export class ResponsablesController {
     }
   }
 
+  @Get('estudiante/:id')
+  findResponsablesEstudiante(@Param('id') id: string) {
+    try {
+      return this.responsablesService.findResponsablesEstudiante(+id);
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener los responsables del estudiante',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
