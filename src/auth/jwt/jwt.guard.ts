@@ -57,12 +57,6 @@ export class JwtGuard implements CanActivate {
       );
     }
 
-    //validar que la solicitud provenga de la ip que se guardo en el token al momento del login
-    const ipOrigen = request.ips ? request.ips[0] : request.ip;
-    if (payload.ip !== ipOrigen) {
-      throw new HttpException('Invalid token source', HttpStatus.UNAUTHORIZED);
-    }
-
     let user: UsuarioEntity | TutoresEntity | null = null;
     if (payload.type == 'USUARIO') {
       user = await this.usuariosService.findById(payload.sub);
