@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -25,8 +27,9 @@ export class EstudiantesService {
   constructor(
     @InjectRepository(EstudiantesRepository)
     private readonly estudiantesRepository: EstudiantesRepository,
-    private readonly tutoresService: TutoresService,
+    @Inject(forwardRef(() => EstadoEscolarService))
     private readonly estadoEscolarService: EstadoEscolarService,
+    private readonly tutoresService: TutoresService,
     private readonly socketsAdminGateway: SocketsAdminGateway,
   ) {}
 

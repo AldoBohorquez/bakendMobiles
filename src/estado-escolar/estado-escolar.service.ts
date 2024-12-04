@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEstadoEscolarDto } from './dto/create-estado-escolar.dto';
 import { UpdateEstadoEscolarDto } from './dto/update-estado-escolar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +16,7 @@ export class EstadoEscolarService {
   constructor(
     @InjectRepository(estadoEscolarRepository)
     private readonly estadoEscolarRepository: estadoEscolarRepository,
+    @Inject(forwardRef(() => EstudiantesService))
     private readonly estudianteService: EstudiantesService,
   ) {}
   async create(
