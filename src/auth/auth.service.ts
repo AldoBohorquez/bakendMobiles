@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDTO } from './dto/token-payload.dto';
 import { UsuarioEntity } from 'src/usuarios/entities/usuario.entity';
 import { TutoresService } from 'src/tutores/tutores.service';
+import { TutoresEntity } from 'src/tutores/entities/tutore.entity';
 
 @Injectable()
 export class AuthService {
@@ -92,7 +93,7 @@ export class AuthService {
     }
   }
 
-  async validateTokenTutor(token: string): Promise<any> {
+  async validateTokenTutor(token: string): Promise<TutoresEntity> {
     try {
       const tokenPayload: TokenPayloadDTO = this.jwtService.verify(token);
       const tutor = await this.tutoresService.findById(tokenPayload.sub);

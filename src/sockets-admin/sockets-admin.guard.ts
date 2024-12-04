@@ -24,8 +24,8 @@ export class SocketsAdminGuard implements CanActivate {
       }
 
       if (invalidToken) {
-        const userTutor = await this.authService.validateTokenTutor(token);
-        if (!userTutor) {
+        const user = await this.authService.validateTokenTutor(token);
+        if (!user) {
           throw new WsException('Token inválido');
         }
         client.data2 = {
