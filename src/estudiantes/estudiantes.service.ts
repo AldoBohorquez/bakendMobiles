@@ -48,13 +48,9 @@ export class EstudiantesService {
     const estudianteCreado =
       await this.estudiantesRepository.save(bodyEstudent);
 
-    const primerEstadoEscolar = await this.estadoEscolarService.create({
+    await this.estadoEscolarService.create({
       id_estudiante: estudianteCreado.id_estudiante,
       estado: 'No establecido',
-    });
-
-    await this.estudiantesRepository.update(estudianteCreado.id_estudiante, {
-      estado_escolar: [primerEstadoEscolar],
     });
 
     mkdirSync('./uploads/estudiantes/' + estudianteCreado.id_estudiante, {
