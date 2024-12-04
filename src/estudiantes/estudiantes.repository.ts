@@ -37,7 +37,7 @@ export class EstudiantesRepository extends Repository<EstudianteEntity> {
       relations: ['tutor', 'estado_escolar', 'responsables'],
       order: {
         estado_escolar: {
-          id_estado: 'DESC',
+          id_estado: 'ASC',
         },
       },
     });
