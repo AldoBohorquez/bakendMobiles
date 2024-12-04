@@ -35,6 +35,11 @@ export class EstudiantesRepository extends Repository<EstudianteEntity> {
     return this.find({
       where: { tutor: { id_tutor: idTutor } },
       relations: ['tutor', 'estado_escolar', 'responsables'],
+      order: {
+        estado_escolar: {
+          id_estado: 'DESC',
+        },
+      },
     });
   }
 }
