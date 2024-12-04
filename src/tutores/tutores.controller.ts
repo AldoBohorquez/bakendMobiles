@@ -12,15 +12,12 @@ import {
 import { TutoresService } from './tutores.service';
 import { CreateTutoreDto } from './dto/create-tutore.dto';
 import { UpdateTutoreDto } from './dto/update-tutore.dto';
-import { IsProfile } from 'src/auth/jwt/profile.decorator';
-import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('tutores')
 export class TutoresController {
   constructor(private readonly tutoresService: TutoresService) {}
 
   @Post()
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   create(@Body() createTutoreDto: CreateTutoreDto) {
     try {
       return this.tutoresService.create(createTutoreDto);
@@ -34,7 +31,6 @@ export class TutoresController {
   }
 
   @Get()
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findAll() {
     try {
       return this.tutoresService.findAll();
@@ -48,7 +44,6 @@ export class TutoresController {
   }
 
   @Get(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   findOne(@Param('id') id: string) {
     try {
       return this.tutoresService.findOne(+id);
@@ -62,7 +57,6 @@ export class TutoresController {
   }
 
   @Patch(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   update(@Param('id') id: string, @Body() updateTutoreDto: UpdateTutoreDto) {
     try {
       return this.tutoresService.update(+id, updateTutoreDto);
@@ -76,7 +70,6 @@ export class TutoresController {
   }
 
   @Delete(':id')
-  @IsProfile(PerfilesEnum.SUPER, PerfilesEnum.ADMIN)
   remove(@Param('id') id: string) {
     try {
       return this.tutoresService.remove(+id);

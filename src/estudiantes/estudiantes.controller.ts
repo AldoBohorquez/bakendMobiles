@@ -15,15 +15,12 @@ import {
 import { EstudiantesService } from './estudiantes.service';
 import { CreateEstudianteDto } from './dto/create-estudiante.dto';
 import { UpdateEstudianteDto } from './dto/update-estudiante.dto';
-import { IsProfile } from 'src/auth/jwt/profile.decorator';
-import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 import { SyslogInclude } from 'src/syslog/interceptors/syslog-include.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Public } from 'src/auth/jwt/public.decorator';
 
 @Controller('estudiantes')
-@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class EstudiantesController {
   constructor(private readonly estudiantesService: EstudiantesService) {}
 

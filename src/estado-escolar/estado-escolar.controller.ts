@@ -12,11 +12,8 @@ import {
 import { EstadoEscolarService } from './estado-escolar.service';
 import { CreateEstadoEscolarDto } from './dto/create-estado-escolar.dto';
 import { UpdateEstadoEscolarDto } from './dto/update-estado-escolar.dto';
-import { IsProfile } from 'src/auth/jwt/profile.decorator';
-import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('estado-escolar')
-@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class EstadoEscolarController {
   constructor(private readonly estadoEscolarService: EstadoEscolarService) {}
 
