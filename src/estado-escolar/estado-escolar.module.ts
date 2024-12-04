@@ -10,6 +10,6 @@ import { EstudiantesModule } from 'src/estudiantes/estudiantes.module';
   imports: [TypeOrmModule.forFeature([EstadoEscolarEntity]), EstudiantesModule],
   controllers: [EstadoEscolarController],
   providers: [EstadoEscolarService, estadoEscolarRepository],
-  exports: [EstadoEscolarService],
+  exports: [EstadoEscolarService, estadoEscolarRepository],
 })
 export class EstadoEscolarModule {}
