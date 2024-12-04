@@ -15,8 +15,11 @@ import { ResponsablesService } from './responsables.service';
 import { CreateResponsableDto } from './dto/create-responsable.dto';
 import { UpdateResponsableDto } from './dto/update-responsable.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { IsProfile } from 'src/auth/jwt/profile.decorator';
+import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('responsables')
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class ResponsablesController {
   constructor(private readonly responsablesService: ResponsablesService) {}
 

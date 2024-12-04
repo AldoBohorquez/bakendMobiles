@@ -23,7 +23,7 @@ export class SocketsAdminGuard implements CanActivate {
       }
 
       //adjuntar el usuario a la data del cliente
-      client.data = {
+      client.data1 = {
         user,
       };
 

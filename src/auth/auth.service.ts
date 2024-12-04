@@ -91,4 +91,17 @@ export class AuthService {
       throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED);
     }
   }
+
+  async validateTokenTutor(token: string): Promise<any> {
+    try {
+      const tokenPayload: TokenPayloadDTO = this.jwtService.verify(token);
+      const tutor = await this.tutoresService.findById(tokenPayload.sub);
+      if (!tutor) {
+        throw new HttpException('Tutor no encontrado', HttpStatus.UNAUTHORIZED);
+      }
+      return tutor;
+    } catch (error) {
+      throw new HttpException('Token inválido', HttpStatus.UNAUTHORIZED);
+    }
+  }
 }

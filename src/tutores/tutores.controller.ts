@@ -12,8 +12,11 @@ import {
 import { TutoresService } from './tutores.service';
 import { CreateTutoreDto } from './dto/create-tutore.dto';
 import { UpdateTutoreDto } from './dto/update-tutore.dto';
+import { IsProfile } from 'src/auth/jwt/profile.decorator';
+import { PerfilesEnum } from 'src/usuarios/dto/perfiles.enum';
 
 @Controller('tutores')
+@IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
 export class TutoresController {
   constructor(private readonly tutoresService: TutoresService) {}
 
