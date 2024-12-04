@@ -13,13 +13,26 @@ export class SocketsAdminGuard implements CanActivate {
       throw new WsException('Token no proporcionado');
     }
     try {
+      let invalidToken = false;
       const user = await this.authService.validateToken(token);
       if (!user) {
-        throw new WsException('Usuario no encontrado');
+        invalidToken = true;
       }
 
       if (!user.activo) {
-        throw new WsException('Usuario inactivo');
+        invalidToken = true;
+      }
+
+      if (invalidToken) {
+        const userTutor = await this.authService.validateTokenTutor(token);
+        if (!userTutor) {
+          throw new WsException('Token inválido');
+        }
+        client.data2 = {
+          user,
+        };
+
+        return true;
       }
 
       //adjuntar el usuario a la data del cliente
