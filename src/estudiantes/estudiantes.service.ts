@@ -17,6 +17,7 @@ import { IsProfile } from 'src/auth/jwt/profile.decorator';
 import { TutoresService } from 'src/tutores/tutores.service';
 import { Response } from 'express';
 import { ResponseEstudianteDto } from './dto/response-estudiante.dto';
+import { EstadoEscolarService } from 'src/estado-escolar/estado-escolar.service';
 
 @Injectable()
 @IsProfile(PerfilesEnum.ADMIN, PerfilesEnum.TUTOR)
@@ -25,6 +26,7 @@ export class EstudiantesService {
     @InjectRepository(EstudiantesRepository)
     private readonly estudiantesRepository: EstudiantesRepository,
     private readonly tutoresService: TutoresService,
+    private readonly estadoEscolarService: EstadoEscolarService,
     private readonly socketsAdminGateway: SocketsAdminGateway,
   ) {}
 
@@ -36,11 +38,22 @@ export class EstudiantesService {
     bodyEstudent.tutor = await this.tutoresService.findById(
       Number(createEstudianteDto.id_tutor),
     );
+
     bodyEstudent.fecha_nacimiento = new Date(
       createEstudianteDto.fecha_nacimiento,
     );
     const estudianteCreado =
       await this.estudiantesRepository.save(bodyEstudent);
+
+    const primerEstadoEscolar = await this.estadoEscolarService.create({
+      id_estudiante: estudianteCreado.id_estudiante,
+      estado: 'No establecido',
+    });
+
+    await this.estudiantesRepository.update(estudianteCreado.id_estudiante, {
+      estado_escolar: [primerEstadoEscolar],
+    });
+
     mkdirSync('./uploads/estudiantes/' + estudianteCreado.id_estudiante, {
       recursive: true,
     });
